@@ -10,33 +10,146 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSuppliesIndexRouteImport } from './routes/_authenticated/supplies/index'
+import { Route as AuthenticatedSuppliesNewRouteImport } from './routes/_authenticated/supplies/new'
+import { Route as AuthenticatedSuppliesItemIdIndexRouteImport } from './routes/_authenticated/supplies/$itemId/index'
+import { Route as AuthenticatedSuppliesItemIdEditRouteImport } from './routes/_authenticated/supplies/$itemId/edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSuppliesIndexRoute =
+  AuthenticatedSuppliesIndexRouteImport.update({
+    id: '/supplies/',
+    path: '/supplies/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliesNewRoute =
+  AuthenticatedSuppliesNewRouteImport.update({
+    id: '/supplies/new',
+    path: '/supplies/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliesItemIdIndexRoute =
+  AuthenticatedSuppliesItemIdIndexRouteImport.update({
+    id: '/supplies/$itemId/',
+    path: '/supplies/$itemId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedSuppliesItemIdEditRoute =
+  AuthenticatedSuppliesItemIdEditRouteImport.update({
+    id: '/supplies/$itemId/edit',
+    path: '/supplies/$itemId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/supplies/': typeof AuthenticatedSuppliesIndexRoute
+  '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/audit': typeof AuthenticatedAuditRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/supplies': typeof AuthenticatedSuppliesIndexRoute
+  '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/supplies/$itemId': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/audit': typeof AuthenticatedAuditRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/_authenticated/supplies/': typeof AuthenticatedSuppliesIndexRoute
+  '/_authenticated/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/_authenticated/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/settings'
+    | '/supplies/new'
+    | '/supplies/'
+    | '/supplies/$itemId/edit'
+    | '/supplies/$itemId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/audit'
+    | '/dashboard'
+    | '/settings'
+    | '/supplies/new'
+    | '/supplies'
+    | '/supplies/$itemId/edit'
+    | '/supplies/$itemId'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/audit'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/settings'
+    | '/_authenticated/supplies/new'
+    | '/_authenticated/supplies/'
+    | '/_authenticated/supplies/$itemId/edit'
+    | '/_authenticated/supplies/$itemId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +161,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/audit': {
+      id: '/_authenticated/audit'
+      path: '/audit'
+      fullPath: '/audit'
+      preLoaderRoute: typeof AuthenticatedAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplies/': {
+      id: '/_authenticated/supplies/'
+      path: '/supplies'
+      fullPath: '/supplies/'
+      preLoaderRoute: typeof AuthenticatedSuppliesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplies/new': {
+      id: '/_authenticated/supplies/new'
+      path: '/supplies/new'
+      fullPath: '/supplies/new'
+      preLoaderRoute: typeof AuthenticatedSuppliesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplies/$itemId/': {
+      id: '/_authenticated/supplies/$itemId/'
+      path: '/supplies/$itemId'
+      fullPath: '/supplies/$itemId/'
+      preLoaderRoute: typeof AuthenticatedSuppliesItemIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/supplies/$itemId/edit': {
+      id: '/_authenticated/supplies/$itemId/edit'
+      path: '/supplies/$itemId/edit'
+      fullPath: '/supplies/$itemId/edit'
+      preLoaderRoute: typeof AuthenticatedSuppliesItemIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSuppliesNewRoute: typeof AuthenticatedSuppliesNewRoute
+  AuthenticatedSuppliesIndexRoute: typeof AuthenticatedSuppliesIndexRoute
+  AuthenticatedSuppliesItemIdEditRoute: typeof AuthenticatedSuppliesItemIdEditRoute
+  AuthenticatedSuppliesItemIdIndexRoute: typeof AuthenticatedSuppliesItemIdIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAuditRoute: AuthenticatedAuditRoute,
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSuppliesNewRoute: AuthenticatedSuppliesNewRoute,
+  AuthenticatedSuppliesIndexRoute: AuthenticatedSuppliesIndexRoute,
+  AuthenticatedSuppliesItemIdEditRoute: AuthenticatedSuppliesItemIdEditRoute,
+  AuthenticatedSuppliesItemIdIndexRoute: AuthenticatedSuppliesItemIdIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
