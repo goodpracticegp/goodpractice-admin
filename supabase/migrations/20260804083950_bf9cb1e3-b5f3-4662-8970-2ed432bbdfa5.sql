@@ -1,0 +1,1 @@
+GRANT SELECT, INSERT, DELETE ON public.source_export TO sandbox_exec;

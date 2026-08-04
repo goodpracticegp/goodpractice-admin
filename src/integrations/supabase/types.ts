@@ -228,6 +228,33 @@ export type Database = {
           },
         ]
       }
+      source_export: {
+        Row: {
+          created_at: string
+          data: string
+          file_bytes: number
+          file_md5: string
+          part: number
+          total_parts: number
+        }
+        Insert: {
+          created_at?: string
+          data: string
+          file_bytes: number
+          file_md5: string
+          part: number
+          total_parts: number
+        }
+        Update: {
+          created_at?: string
+          data?: string
+          file_bytes?: number
+          file_md5?: string
+          part?: number
+          total_parts?: number
+        }
+        Relationships: []
+      }
       stock_movements: {
         Row: {
           created_at: string
