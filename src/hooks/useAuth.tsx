@@ -56,6 +56,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setRole(null);
         setFullName("");
       }
+      if (event === "SIGNED_IN") {
+        void import("@/lib/audit").then(({ logAudit }) =>
+          logAudit("Login", "auth", null, { email: nextSession?.user?.email ?? "" }),
+        );
+      }
       if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
         router.invalidate();
         if (event !== "SIGNED_OUT") void queryClient.invalidateQueries();
