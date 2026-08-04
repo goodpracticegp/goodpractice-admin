@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Loader2, Lock } from "lucide-react";
+import { Loader2, MailCheck, Send } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BrandMark } from "@/components/BrandMark";
-import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -17,29 +16,29 @@ export const Route = createFileRoute("/auth")({
       {
         name: "description",
         content:
-          "Secure staff sign in for the Good Practice (GP) Surgery medical centre administration system.",
+          "Secure email link sign in for authorised administrators of the Good Practice (GP) Surgery medical centre administration system.",
       },
       { property: "og:title", content: "Staff Sign In | Good Practice (GP) Surgery" },
       {
         property: "og:description",
-        content: "Secure staff sign in for the Good Practice GP Surgery administration system.",
+        content:
+          "Secure email link sign in for authorised administrators of the Good Practice GP Surgery administration system.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
 });
 
-const DEMO = [
-  { label: "Administrator", email: "admin@goodpracticegp.com.au", password: "GPAdmin2026!" },
-  { label: "Staff", email: "staff@goodpracticegp.com.au", password: "GPStaff2026!" },
-];
+const AUTHORISED_EMAIL = "info@goodpracticegp.com.au";
 
 function AuthPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => {
@@ -51,30 +50,40 @@ function AuthPage() {
     event.preventDefault();
     setError(null);
 
-    if (!email.trim() || !password) {
-      setError("Enter your work email address and password.");
+    const value = email.trim().toLowerCase();
+    if (!value) {
+      setError("Enter your work email address.");
       return;
     }
 
-    setSubmitting(true);
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
-      password,
-    });
-    setSubmitting(false);
-
-    if (signInError) {
+    if (value !== AUTHORISED_EMAIL) {
       setError(
-        signInError.message.toLowerCase().includes("invalid")
-          ? "Those sign in details are not correct. Please check and try again."
-          : signInError.message,
+        "Access is restricted to authorised practice administrators. No sign in link has been sent.",
       );
       return;
     }
 
-    await logAudit("Login", "auth", null, { email: email.trim().toLowerCase() });
-    toast.success("Signed in successfully");
-    void navigate({ to: "/dashboard", replace: true });
+    setSubmitting(true);
+    const { error: otpError } = await supabase.auth.signInWithOtp({
+      email: value,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: window.location.origin,
+      },
+    });
+    setSubmitting(false);
+
+    if (otpError) {
+      setError(
+        otpError.message.toLowerCase().includes("rate")
+          ? "Too many sign in links have been requested. Please wait a few minutes and try again."
+          : otpError.message,
+      );
+      return;
+    }
+
+    setSent(true);
+    toast.success("Sign in link sent");
   };
 
   return (
@@ -86,78 +95,71 @@ function AuthPage() {
               <BrandMark />
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5 p-6">
-              <div>
-                <h1 className="text-lg font-semibold text-navy">Staff sign in</h1>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Administration System access is restricted to practice staff. Accounts are created
-                  by a practice administrator.
+            {sent ? (
+              <div className="space-y-4 p-6">
+                <div className="flex items-center gap-2 text-teal">
+                  <MailCheck className="h-5 w-5" />
+                  <h1 className="text-lg font-semibold text-navy">Check your email</h1>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  A single use sign in link has been sent to{" "}
+                  <span className="font-medium text-foreground">{AUTHORISED_EMAIL}</span>. Open the
+                  email on this device and select the link to access the Administration System.
                 </p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setSent(false);
+                    setError(null);
+                  }}
+                >
+                  Send another link
+                </Button>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5 p-6">
+                <div>
+                  <h1 className="text-lg font-semibold text-navy">Administrator sign in</h1>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Enter your work email address and we will send you a secure sign in link. Access
+                    is limited to authorised practice administrators.
+                  </p>
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Work email address</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="username"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@goodpracticegp.com.au"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">Work email address</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="username"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@goodpracticegp.com.au"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              {error && (
-                <p role="alert" className="rounded-md bg-alert-soft px-3 py-2 text-sm text-alert">
-                  {error}
-                </p>
-              )}
-
-              <Button type="submit" className="w-full" disabled={submitting}>
-                {submitting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Lock className="mr-2 h-4 w-4" />
+                {error && (
+                  <p role="alert" className="rounded-md bg-alert-soft px-3 py-2 text-sm text-alert">
+                    {error}
+                  </p>
                 )}
-                Sign in
-              </Button>
 
-              <div className="rounded-md border border-dashed border-border bg-muted/60 p-3">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Demo credentials
-                </p>
-                <ul className="mt-2 space-y-1.5">
-                  {DEMO.map((account) => (
-                    <li key={account.email} className="text-xs text-muted-foreground">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEmail(account.email);
-                          setPassword(account.password);
-                        }}
-                        className="text-left font-medium text-teal underline-offset-2 hover:underline"
-                      >
-                        {account.label}: {account.email} / {account.password}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </form>
+                <Button type="submit" className="w-full" disabled={submitting}>
+                  {submitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="mr-2 h-4 w-4" />
+                  )}
+                  Send sign in link
+                </Button>
+              </form>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
