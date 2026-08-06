@@ -289,29 +289,50 @@ export function DeleteItemDialog({
   item: SupplyItem | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: (reason: string) => void;
   pending: boolean;
 }) {
+  const [reason, setReason] = useState("");
+
+  useEffect(() => {
+    if (open) setReason("");
+  }, [open]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-alert">Delete supply item</DialogTitle>
+          <DialogTitle className="text-alert">Archive supply item</DialogTitle>
           <DialogDescription>
             {item
-              ? `Delete ${item.item_code} ${item.item_description}? This also removes its stock movements, purchases and reorder notifications. This cannot be undone.`
+              ? `Archive ${item.item_code} ${item.item_description}? It is removed from the active supplies list, while its stock movements, purchases and reorder notifications are kept for audit. An administrator can restore it later.`
               : ""}
           </DialogDescription>
         </DialogHeader>
+        <div className="space-y-1.5">
+          <Label htmlFor="archive-reason">Reason (optional)</Label>
+          <Input
+            id="archive-reason"
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            placeholder="For example: no longer supplied"
+          />
+        </div>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
-          <Button type="button" variant="destructive" onClick={onConfirm} disabled={pending}>
-            Delete item
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => onConfirm(reason)}
+            disabled={pending}
+          >
+            Archive item
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 }
+

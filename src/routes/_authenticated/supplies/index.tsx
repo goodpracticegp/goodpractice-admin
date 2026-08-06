@@ -47,9 +47,9 @@ import { logAudit } from "@/lib/audit";
 type SortKey = "item_code" | "item_description" | "category" | "available_stock" | "purchase_price_aud" | "status" | "expiry_date";
 
 export const Route = createFileRoute("/_authenticated/supplies/")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    status: typeof search["status"] === "string" ? (search["status"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { status?: string } =>
+    typeof search["status"] === "string" ? { status: search["status"] } : {},
+
   head: () => ({
     meta: [
       { title: "Medical Supplies Inventory | Good Practice (GP) Surgery" },
@@ -125,12 +125,13 @@ function SuppliesPage() {
   const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const deleteMutation = useMutation({
-    mutationFn: async (item: SupplyItem) => deleteItem(item),
+    mutationFn: async (input: { item: SupplyItem; reason: string }) =>
+      deleteItem(input.item, input.reason),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["items"] });
       void queryClient.invalidateQueries({ queryKey: ["reorder-count"] });
       void queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
-      toast.success("Supply item deleted");
+      toast.success("Supply item archived");
       setDeleteTarget(null);
     },
     onError: (error: Error) => toast.error(error.message),
@@ -386,7 +387,7 @@ function SuppliesPage() {
                           </button>
                           <button
                             type="button"
-                            title="Delete item"
+                            title="Archive item"
                             aria-label={`Delete ${item.item_code}`}
                             onClick={() => setDeleteTarget(item)}
                             className="rounded p-2 text-muted-foreground hover:bg-alert/10 hover:text-alert"
@@ -443,7 +444,7 @@ function SuppliesPage() {
         open={deleteTarget !== null}
         pending={deleteMutation.isPending}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget)}
+        onConfirm={(reason) => deleteTarget && deleteMutation.mutate({ item: deleteTarget, reason })}
       />
     </div>
   );

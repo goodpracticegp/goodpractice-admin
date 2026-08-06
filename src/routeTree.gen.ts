@@ -19,6 +19,7 @@ import { Route as AuthenticatedSuppliesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedSuppliesNewRouteImport } from './routes/_authenticated/supplies/new'
 import { Route as AuthenticatedSuppliesItemIdIndexRouteImport } from './routes/_authenticated/supplies/$itemId/index'
 import { Route as AuthenticatedSuppliesItemIdEditRouteImport } from './routes/_authenticated/supplies/$itemId/edit'
+import { Route as ApiPublicHooksSendReorderEmailsRouteImport } from './routes/api/public/hooks/send-reorder-emails'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -73,6 +74,12 @@ const AuthenticatedSuppliesItemIdEditRoute =
     path: '/supplies/$itemId/edit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicHooksSendReorderEmailsRoute =
+  ApiPublicHooksSendReorderEmailsRouteImport.update({
+    id: '/api/public/hooks/send-reorder-emails',
+    path: '/api/public/hooks/send-reorder-emails',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -83,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/supplies/': typeof AuthenticatedSuppliesIndexRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
   '/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -94,6 +102,7 @@ export interface FileRoutesByTo {
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/supplies': typeof AuthenticatedSuppliesIndexRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
   '/supplies/$itemId': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesById {
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/_authenticated/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/_authenticated/supplies/': typeof AuthenticatedSuppliesIndexRoute
   '/_authenticated/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
+  '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
   '/_authenticated/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/supplies/new'
     | '/supplies/'
     | '/supplies/$itemId/edit'
+    | '/api/public/hooks/send-reorder-emails'
     | '/supplies/$itemId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/supplies/new'
     | '/supplies'
     | '/supplies/$itemId/edit'
+    | '/api/public/hooks/send-reorder-emails'
     | '/supplies/$itemId'
   id:
     | '__root__'
@@ -143,6 +155,7 @@ export interface FileRouteTypes {
     | '/_authenticated/supplies/new'
     | '/_authenticated/supplies/'
     | '/_authenticated/supplies/$itemId/edit'
+    | '/api/public/hooks/send-reorder-emails'
     | '/_authenticated/supplies/$itemId/'
   fileRoutesById: FileRoutesById
 }
@@ -150,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiPublicHooksSendReorderEmailsRoute: typeof ApiPublicHooksSendReorderEmailsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -224,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSuppliesItemIdEditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/send-reorder-emails': {
+      id: '/api/public/hooks/send-reorder-emails'
+      path: '/api/public/hooks/send-reorder-emails'
+      fullPath: '/api/public/hooks/send-reorder-emails'
+      preLoaderRoute: typeof ApiPublicHooksSendReorderEmailsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -254,6 +275,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiPublicHooksSendReorderEmailsRoute: ApiPublicHooksSendReorderEmailsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

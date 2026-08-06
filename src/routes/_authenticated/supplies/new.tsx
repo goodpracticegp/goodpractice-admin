@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ItemForm, type ItemFormValues } from "@/components/ItemForm";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchItems } from "@/lib/supplies";
-import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/supplies/new")({
   head: () => ({
@@ -65,10 +64,6 @@ function NewItemPage() {
         });
       }
 
-      await logAudit("Create", "medical_supply_items", data.id, {
-        item_code: data.item_code,
-        item_description: data.item_description,
-      });
       return data;
     },
     onSuccess: (data) => {

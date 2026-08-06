@@ -52,6 +52,9 @@ export type Database = {
           available_stock: number
           category: string
           created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
           expiry_date: string | null
           id: string
           item_code: string
@@ -70,6 +73,9 @@ export type Database = {
           available_stock?: number
           category: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
           expiry_date?: string | null
           id?: string
           item_code: string
@@ -88,6 +94,9 @@ export type Database = {
           available_stock?: number
           category?: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deleted_reason?: string | null
           expiry_date?: string | null
           id?: string
           item_code?: string
@@ -295,6 +304,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      adjust_stock: {
+        Args: { _change: number; _item_id: string; _reason: string }
+        Returns: {
+          available_stock: number
+          category: string
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          expiry_date: string | null
+          id: string
+          item_code: string
+          item_description: string
+          last_purchased_date: string | null
+          purchase_price_aud: number
+          reorder_level: number
+          reorder_notified: boolean
+          reorder_quantity: number
+          status: string
+          supplier_email: string
+          supplier_name: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medical_supply_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       compute_item_status: {
         Args: {
           _current_status: string
@@ -303,6 +342,7 @@ export type Database = {
         }
         Returns: string
       }
+      current_user_email: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -312,6 +352,125 @@ export type Database = {
       }
       is_admin: { Args: never; Returns: boolean }
       is_staff_or_admin: { Args: never; Returns: boolean }
+      log_client_event: {
+        Args: {
+          _action: string
+          _details?: Json
+          _entity: string
+          _entity_id?: string
+        }
+        Returns: undefined
+      }
+      mark_reorder_notification: {
+        Args: { _notification_id: string; _status: string }
+        Returns: undefined
+      }
+      record_purchase: {
+        Args: {
+          _item_id: string
+          _purchase_date: string
+          _quantity: number
+          _supplier_email: string
+          _supplier_name: string
+          _unit_price: number
+        }
+        Returns: {
+          available_stock: number
+          category: string
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          expiry_date: string | null
+          id: string
+          item_code: string
+          item_description: string
+          last_purchased_date: string | null
+          purchase_price_aud: number
+          reorder_level: number
+          reorder_notified: boolean
+          reorder_quantity: number
+          status: string
+          supplier_email: string
+          supplier_name: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medical_supply_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      restore_item: {
+        Args: { _item_id: string }
+        Returns: {
+          available_stock: number
+          category: string
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          expiry_date: string | null
+          id: string
+          item_code: string
+          item_description: string
+          last_purchased_date: string | null
+          purchase_price_aud: number
+          reorder_level: number
+          reorder_notified: boolean
+          reorder_quantity: number
+          status: string
+          supplier_email: string
+          supplier_name: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medical_supply_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      soft_delete_item: {
+        Args: { _item_id: string; _reason?: string }
+        Returns: {
+          available_stock: number
+          category: string
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          deleted_reason: string | null
+          expiry_date: string | null
+          id: string
+          item_code: string
+          item_description: string
+          last_purchased_date: string | null
+          purchase_price_aud: number
+          reorder_level: number
+          reorder_notified: boolean
+          reorder_quantity: number
+          status: string
+          supplier_email: string
+          supplier_name: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "medical_supply_items"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      write_audit: {
+        Args: {
+          _action: string
+          _details: Json
+          _entity: string
+          _entity_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "staff"
