@@ -18,8 +18,16 @@ export type ReorderMailResult = {
 
 type Blocked = { blocked: true; reason: string };
 
+/**
+ * Anything other than a permanent rejection of this recipient is treated as a
+ * blocking condition: the queue is left untouched and retried by the next
+ * scheduled run, so a configuration problem never discards a reorder record.
+ */
 function classify(error: unknown): Blocked | { blocked: false } {
   const err = error as { code?: string | null; status?: number; message?: string };
+  const permanent = new Set(["invalid_recipient", "invalid_from", "invalid_template"]);
+  if (err?.code && permanent.has(err.code)) return { blocked: false };
+
   if (err?.code === "domain_not_verified") {
     return {
       blocked: true,
@@ -33,8 +41,13 @@ function classify(error: unknown): Blocked | { blocked: false } {
   if (err?.status === 429) {
     return { blocked: true, reason: "Email sending is rate limited. The queue will be retried." };
   }
-  return { blocked: false };
+  const detail = err?.message ? ` Details: ${err.message}` : "";
+  return {
+    blocked: true,
+    reason: `Reorder emails could not be sent and stay queued for the next run.${detail}`,
+  };
 }
+
 
 /**
  * Sends every queued "Reorder Required" notification through Lovable managed
