@@ -24,11 +24,12 @@ type Blocked = { blocked: true; reason: string };
  * scheduled run, so a configuration problem never discards a reorder record.
  */
 function classify(error: unknown): Blocked | { blocked: false } {
-  const err = error as { code?: string | null; status?: number; message?: string };
+  const raw = error as { code?: string | null; status?: number; message?: string; type?: string };
+  const err = { ...raw, code: raw?.code ?? raw?.type ?? null };
   const permanent = new Set(["invalid_recipient", "invalid_from", "invalid_template"]);
   if (err?.code && permanent.has(err.code)) return { blocked: false };
 
-  if (err?.code === "domain_not_verified") {
+  if (err?.code === "domain_not_verified" || err?.code === "no_matching_sender") {
     return {
       blocked: true,
       reason:
