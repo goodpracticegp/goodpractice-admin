@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import {
   LayoutDashboard,
@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/BrandMark";
 import { useAuth } from "@/hooks/useAuth";
-import { sendReorderEmails } from "@/lib/reorder-email.functions";
+import { getReorderMailStatus } from "@/lib/reorder-email.functions";
 import { cn } from "@/lib/utils";
 
 type NavItem = { label: string; to: string; icon: typeof Package; adminOnly?: boolean };
@@ -58,33 +58,28 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function ReorderMailBanner() {
-  const queryClient = useQueryClient();
   const [dismissed, setDismissed] = useState(false);
-  const send = useServerFn(sendReorderEmails);
+  const status = useServerFn(getReorderMailStatus);
 
-  const mailer = useMutation({
-    mutationFn: () => send({ data: undefined as never }),
-    onSuccess: (result) => {
-      if (result.sent > 0) void queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    },
+  const { data } = useQuery({
+    queryKey: ["reorder-mail-status"],
+    queryFn: () => status({}),
+    refetchInterval: 120_000,
   });
 
-  useEffect(() => {
-    mailer.mutate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const needsKey = mailer.data?.needsApiKey || (mailer.data?.failed ?? 0) > 0;
-  if (!needsKey || dismissed) return null;
+  const queued = data?.queued ?? 0;
+  const failed = data?.failed ?? 0;
+  if (dismissed || queued + failed === 0) return null;
 
   return (
     <div className="flex items-start gap-3 border-b border-alert/30 bg-alert-soft px-4 py-3 sm:px-6">
       <MailWarning className="mt-0.5 h-4.5 w-4.5 shrink-0 text-alert" />
       <p className="flex-1 text-sm text-foreground">
-        <span className="font-semibold text-alert">Email delivery is not configured. </span>
-        Reorder notifications are being recorded in the system, but they cannot be emailed to
-        info@goodpracticegp.com.au until a RESEND_API_KEY secret is added in Project Settings then
-        Secrets.
+        <span className="font-semibold text-alert">Reorder emails are waiting to be sent. </span>
+        {queued} notification{queued === 1 ? "" : "s"} queued
+        {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system and
+        the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au starts
+        once the sending domain notify.goodpracticegp.com.au is verified in Cloud then Emails.
       </p>
       <button
         type="button"
@@ -97,6 +92,7 @@ function ReorderMailBanner() {
     </div>
   );
 }
+
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, role, fullName, signOut } = useAuth();

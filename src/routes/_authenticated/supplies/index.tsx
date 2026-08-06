@@ -47,9 +47,9 @@ import { logAudit } from "@/lib/audit";
 type SortKey = "item_code" | "item_description" | "category" | "available_stock" | "purchase_price_aud" | "status" | "expiry_date";
 
 export const Route = createFileRoute("/_authenticated/supplies/")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    status: typeof search["status"] === "string" ? (search["status"] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { status?: string } =>
+    typeof search["status"] === "string" ? { status: search["status"] } : {},
+
   head: () => ({
     meta: [
       { title: "Medical Supplies Inventory | Good Practice (GP) Surgery" },

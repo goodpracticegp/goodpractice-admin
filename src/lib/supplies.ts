@@ -1,6 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { logAudit } from "@/lib/audit";
 import { todaySydney } from "@/lib/au";
 
 export type SupplyItem = Tables<"medical_supply_items">;
@@ -8,11 +7,28 @@ export type StockMovement = Tables<"stock_movements">;
 export type Purchase = Tables<"purchases">;
 export type ReorderNotification = Tables<"reorder_notifications">;
 
+/**
+ * All stock changing operations go through database functions so that the item
+ * update, the purchase or movement row, the recomputed status, the reorder
+ * latch and the audit entry either all commit or none of them do.
+ */
+
 export async function fetchItems(): Promise<SupplyItem[]> {
   const { data, error } = await supabase
     .from("medical_supply_items")
     .select("*")
+    .is("deleted_at", null)
     .order("item_code", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+export async function fetchArchivedItems(): Promise<SupplyItem[]> {
+  const { data, error } = await supabase
+    .from("medical_supply_items")
+    .select("*")
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
   if (error) throw new Error(error.message);
   return data ?? [];
 }
@@ -28,12 +44,6 @@ export async function fetchItem(id: string): Promise<SupplyItem> {
   return data;
 }
 
-async function currentUserId(): Promise<string> {
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) throw new Error("Your session has expired. Please sign in again.");
-  return data.user.id;
-}
-
 export async function recordPurchase(input: {
   item: SupplyItem;
   quantity: number;
@@ -41,95 +51,55 @@ export async function recordPurchase(input: {
   supplierName: string;
   supplierEmail: string;
   purchaseDate: string;
-}) {
-  const userId = await currentUserId();
-  const newStock = input.item.available_stock + input.quantity;
-
-  const { error: updateError } = await supabase
-    .from("medical_supply_items")
-    .update({
-      available_stock: newStock,
-      purchase_price_aud: input.unitPrice,
-      supplier_name: input.supplierName,
-      supplier_email: input.supplierEmail,
-      last_purchased_date: input.purchaseDate,
-    })
-    .eq("id", input.item.id);
-  if (updateError) throw new Error(updateError.message);
-
-  const { error: purchaseError } = await supabase.from("purchases").insert({
-    item_id: input.item.id,
-    quantity: input.quantity,
-    unit_price_aud: input.unitPrice,
-    supplier_name: input.supplierName,
-    supplier_email: input.supplierEmail,
-    purchase_date: input.purchaseDate,
-    recorded_by: userId,
+}): Promise<number> {
+  const { data, error } = await supabase.rpc("record_purchase", {
+    _item_id: input.item.id,
+    _quantity: input.quantity,
+    _unit_price: input.unitPrice,
+    _supplier_name: input.supplierName,
+    _supplier_email: input.supplierEmail,
+    _purchase_date: input.purchaseDate,
   });
-  if (purchaseError) throw new Error(purchaseError.message);
-
-  const { error: movementError } = await supabase.from("stock_movements").insert({
-    item_id: input.item.id,
-    movement_type: "Purchase Received",
-    quantity_change: input.quantity,
-    stock_after: newStock,
-    notes: `Purchase received from ${input.supplierName} at ${input.unitPrice.toFixed(2)} AUD per unit`,
-    performed_by: userId,
-  });
-  if (movementError) throw new Error(movementError.message);
-
-  await logAudit("Purchase", "medical_supply_items", input.item.id, {
-    item_code: input.item.item_code,
-    quantity: input.quantity,
-    unit_price_aud: input.unitPrice,
-    stock_after: newStock,
-  });
-
-  return newStock;
+  if (error) throw new Error(error.message);
+  const row = (Array.isArray(data) ? data[0] : data) as SupplyItem | null;
+  return row?.available_stock ?? input.item.available_stock + input.quantity;
 }
 
 export async function adjustStock(input: {
   item: SupplyItem;
   change: number;
   reason: string;
-}) {
-  const userId = await currentUserId();
-  const newStock = Math.max(0, input.item.available_stock + input.change);
-
-  const { error: updateError } = await supabase
-    .from("medical_supply_items")
-    .update({ available_stock: newStock })
-    .eq("id", input.item.id);
-  if (updateError) throw new Error(updateError.message);
-
-  const { error: movementError } = await supabase.from("stock_movements").insert({
-    item_id: input.item.id,
-    movement_type: input.change < 0 ? "Usage" : "Stock Adjustment",
-    quantity_change: input.change,
-    stock_after: newStock,
-    notes: input.reason,
-    performed_by: userId,
+}): Promise<number> {
+  const { data, error } = await supabase.rpc("adjust_stock", {
+    _item_id: input.item.id,
+    _change: input.change,
+    _reason: input.reason,
   });
-  if (movementError) throw new Error(movementError.message);
-
-  await logAudit("Stock Adjustment", "medical_supply_items", input.item.id, {
-    item_code: input.item.item_code,
-    quantity_change: input.change,
-    stock_after: newStock,
-    reason: input.reason,
-  });
-
-  return newStock;
-}
-
-export async function deleteItem(item: SupplyItem) {
-  const { error } = await supabase.from("medical_supply_items").delete().eq("id", item.id);
   if (error) throw new Error(error.message);
-  await logAudit("Delete", "medical_supply_items", item.id, {
-    item_code: item.item_code,
-    item_description: item.item_description,
-  });
+  const row = (Array.isArray(data) ? data[0] : data) as SupplyItem | null;
+  return row?.available_stock ?? Math.max(0, input.item.available_stock + input.change);
 }
+
+/**
+ * Archives the item (soft delete). Nothing is physically removed, so the
+ * purchase, movement and notification history stays intact and auditable.
+ */
+export async function archiveItem(item: SupplyItem, reason?: string) {
+  const trimmed = reason?.trim();
+  const { error } = await supabase.rpc("soft_delete_item", {
+    _item_id: item.id,
+    ...(trimmed ? { _reason: trimmed } : {}),
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function restoreItem(item: SupplyItem) {
+  const { error } = await supabase.rpc("restore_item", { _item_id: item.id });
+  if (error) throw new Error(error.message);
+}
+
+/** Backwards compatible alias: deleting an item now archives it. */
+export const deleteItem = archiveItem;
 
 export function defaultPurchaseDate() {
   return todaySydney();

@@ -53,3 +53,25 @@ export function buildReorderEmailHtml(row: ReorderRow): string {
   </table>
 </body></html>`;
 }
+
+export function buildReorderEmailText(row: ReorderRow): string {
+  return [
+    "Good Practice (GP) Surgery - Quality Care. Close to Home.",
+    "",
+    "REORDER REQUIRED",
+    `${row.item_code} ${row.item_description}`,
+    "",
+    "Available stock for this item has reached its reorder level.",
+    "Please raise a purchase order with the supplier below.",
+    "",
+    `Item Code: ${row.item_code}`,
+    `Item Description: ${row.item_description}`,
+    `Available Stock: ${row.available_stock}`,
+    `Reorder Level: ${row.reorder_level}`,
+    `Reorder Quantity: ${row.reorder_quantity}`,
+    `Supplier Name: ${row.supplier_name}`,
+    `Supplier Email: ${row.supplier_email}`,
+    "",
+    "Sent automatically by the Good Practice GP Surgery Administration System.",
+  ].join("\n");
+}

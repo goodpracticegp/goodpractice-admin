@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ItemForm, type ItemFormValues } from "@/components/ItemForm";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchItem, fetchItems, type SupplyItem } from "@/lib/supplies";
-import { logAudit } from "@/lib/audit";
 
 export const Route = createFileRoute("/_authenticated/supplies/$itemId/edit")({
   head: () => ({
@@ -70,11 +69,6 @@ function EditItemPage() {
         });
       }
 
-      await logAudit("Edit", "medical_supply_items", itemId, {
-        item_code: values.item_code,
-        previous_stock: item.available_stock,
-        new_stock: newStock,
-      });
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["items"] });
