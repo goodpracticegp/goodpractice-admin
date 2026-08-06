@@ -159,7 +159,7 @@ function ItemDetailPage() {
               </Button>
               <Button size="sm" variant="destructive" onClick={() => setDeleteOpen(true)}>
                 <Trash2 className="mr-1.5 h-4 w-4" />
-                Delete
+                Archive
               </Button>
             </>
           )}
