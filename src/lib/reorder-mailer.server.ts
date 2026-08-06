@@ -94,7 +94,9 @@ export async function dispatchPendingReorderEmails(limit = 25): Promise<ReorderM
           text: buildReorderEmailText(row),
           purpose: "transactional",
           label: "reorder-required",
-          idempotency_key: `reorder-${row.id}`,
+          // Bucketed by run window: retries after a failed attempt need a fresh
+          // key, while two runs inside the same window never send twice.
+          idempotency_key: `reorder-${row.id}-${Math.floor(Date.now() / 900_000)}`,
         },
         { apiKey },
       );
