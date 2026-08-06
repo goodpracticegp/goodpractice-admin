@@ -387,7 +387,7 @@ function SuppliesPage() {
                           </button>
                           <button
                             type="button"
-                            title="Delete item"
+                            title="Archive item"
                             aria-label={`Delete ${item.item_code}`}
                             onClick={() => setDeleteTarget(item)}
                             className="rounded p-2 text-muted-foreground hover:bg-alert/10 hover:text-alert"
