@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      claude_export_chunks: {
+        Row: {
+          chunk: string
+          path: string
+          seq: number
+        }
+        Insert: {
+          chunk: string
+          path: string
+          seq: number
+        }
+        Update: {
+          chunk?: string
+          path?: string
+          seq?: number
+        }
+        Relationships: []
+      }
+      claude_export_meta: {
+        Row: {
+          byte_size: number
+          path: string
+          sha256: string
+        }
+        Insert: {
+          byte_size: number
+          path: string
+          sha256: string
+        }
+        Update: {
+          byte_size?: number
+          path?: string
+          sha256?: string
+        }
+        Relationships: []
+      }
       medical_supply_items: {
         Row: {
           available_stock: number
