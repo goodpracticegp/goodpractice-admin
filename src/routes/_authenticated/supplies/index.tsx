@@ -125,12 +125,13 @@ function SuppliesPage() {
   const pageRows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const deleteMutation = useMutation({
-    mutationFn: async (item: SupplyItem) => deleteItem(item),
+    mutationFn: async (input: { item: SupplyItem; reason: string }) =>
+      deleteItem(input.item, input.reason),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["items"] });
       void queryClient.invalidateQueries({ queryKey: ["reorder-count"] });
       void queryClient.invalidateQueries({ queryKey: ["audit-logs"] });
-      toast.success("Supply item deleted");
+      toast.success("Supply item archived");
       setDeleteTarget(null);
     },
     onError: (error: Error) => toast.error(error.message),
@@ -443,7 +444,7 @@ function SuppliesPage() {
         open={deleteTarget !== null}
         pending={deleteMutation.isPending}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget)}
+        onConfirm={(reason) => deleteTarget && deleteMutation.mutate({ item: deleteTarget, reason })}
       />
     </div>
   );

@@ -87,14 +87,14 @@ function ItemDetailPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (reason: string) => {
       if (!itemQuery.data) throw new Error("Item not loaded.");
-      return deleteItem(itemQuery.data);
+      return deleteItem(itemQuery.data, reason);
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["items"] });
       void queryClient.invalidateQueries({ queryKey: ["reorder-count"] });
-      toast.success("Supply item deleted");
+      toast.success("Supply item archived");
       void navigate({ to: "/supplies" });
     },
     onError: (error: Error) => toast.error(error.message),
@@ -288,7 +288,7 @@ function ItemDetailPage() {
         open={deleteOpen}
         pending={deleteMutation.isPending}
         onOpenChange={setDeleteOpen}
-        onConfirm={() => deleteMutation.mutate()}
+        onConfirm={(reason) => deleteMutation.mutate(reason)}
       />
     </div>
   );
