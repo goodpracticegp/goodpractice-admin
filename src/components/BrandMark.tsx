@@ -1,4 +1,3 @@
-import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function BrandMark({
@@ -10,11 +9,16 @@ export function BrandMark({
 }) {
   return (
     <div className={cn("flex items-center gap-2.5", className)}>
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-alert-soft">
-        <Heart className="h-5 w-5 fill-alert text-alert" />
-      </span>
+      <img
+        src={compact ? "/icons/icon-192.png" : "/brand/good-practice-header-logo.png"}
+        alt="Good Practice GP Surgery"
+        className={cn(
+          "shrink-0 object-contain",
+          compact ? "h-10 w-10 rounded-xl bg-white" : "h-12 w-auto max-w-[190px]",
+        )}
+      />
       {!compact && (
-        <span className="min-w-0">
+        <span className="sr-only">
           <span className="block truncate text-sm font-bold leading-tight">
             Good Practice (GP) Surgery
           </span>

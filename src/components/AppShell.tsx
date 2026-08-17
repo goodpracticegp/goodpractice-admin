@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   MailWarning,
   ClipboardPlus,
+  PlusCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/BrandMark";
@@ -52,6 +53,43 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
           >
             <item.icon className="h-4.5 w-4.5 shrink-0" />
             {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function MobileBottomNav() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const items = [
+    { label: "Home", to: "/dashboard", icon: LayoutDashboard },
+    { label: "Patients", to: "/patient-intakes", icon: ClipboardPlus },
+    { label: "New intake", to: "/patient-intakes/new", icon: PlusCircle },
+    { label: "Supplies", to: "/supplies", icon: Package },
+  ];
+
+  return (
+    <nav
+      aria-label="Mobile navigation"
+      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-panel backdrop-blur lg:hidden"
+    >
+      {items.map((item) => {
+        const active =
+          item.to === "/patient-intakes/new"
+            ? pathname === item.to
+            : pathname === item.to || pathname.startsWith(`${item.to}/`);
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={cn(
+              "flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[11px] font-semibold",
+              active ? "text-alert" : "text-muted-foreground",
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+            <span>{item.label}</span>
           </Link>
         );
       })}
@@ -208,8 +246,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <ReorderMailBanner />
 
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:pb-6">{children}</main>
       </div>
+      <MobileBottomNav />
     </div>
   );
 }

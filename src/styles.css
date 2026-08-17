@@ -146,11 +146,29 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   h1,
   h2,
   h3 {
     letter-spacing: -0.01em;
+  }
+}
+
+@media (pointer: coarse) {
+  input,
+  select,
+  textarea,
+  button {
+    min-height: 44px;
+  }
+}
+
+@media (display-mode: standalone) {
+  body {
+    min-height: 100dvh;
+    padding-top: env(safe-area-inset-top);
   }
 }

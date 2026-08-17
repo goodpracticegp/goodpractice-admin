@@ -223,7 +223,7 @@ export function PatientIntakeForm({ initialValues, submitting, onSubmit, onCance
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-2">
+      <div className="sticky bottom-16 z-30 -mx-4 flex justify-end gap-2 border-t border-border bg-background/95 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0">
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancel
         </Button>
