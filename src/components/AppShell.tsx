@@ -118,7 +118,7 @@ function ReorderMailBanner() {
         <span className="font-semibold text-alert">Reorder emails are waiting to be sent. </span>
         {queued} notification{queued === 1 ? "" : "s"} queued
         {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system
-        and the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au
+        and the scheduled mailer retries automatically. Delivery to support@goodpracticegp.com.au
         starts once the sending domain notify.goodpracticegp.com.au is verified in Cloud then
         Emails.
       </p>

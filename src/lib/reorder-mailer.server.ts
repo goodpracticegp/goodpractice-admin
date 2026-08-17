@@ -1,7 +1,7 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { buildReorderEmailHtml, buildReorderEmailText } from "./reorder-email-template.server";
 
-export const REORDER_RECIPIENT = "info@goodpracticegp.com.au";
+export const REORDER_RECIPIENT = "support@goodpracticegp.com.au";
 /** Delegated sending subdomain managed by Lovable Emails. */
 export const SENDER_DOMAIN = "notify.goodpracticegp.com.au";
 export const REORDER_FROM = `Good Practice (GP) Surgery <procurement@${SENDER_DOMAIN}>`;

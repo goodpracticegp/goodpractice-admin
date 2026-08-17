@@ -1,5 +1,5 @@
 export const SYDNEY_TZ = "Australia/Sydney";
-export const NOTIFICATION_RECIPIENT = "info@goodpracticegp.com.au";
+export const NOTIFICATION_RECIPIENT = "support@goodpracticegp.com.au";
 
 export const CATEGORIES = [
   "Consumables",

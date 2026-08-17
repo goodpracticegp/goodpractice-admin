@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 /**
  * Scheduled reorder mailer. Called every 15 minutes by the database scheduler
  * (pg_cron) so queued "Reorder Required" notifications are emailed to
- * info@goodpracticegp.com.au whether or not anybody has the app open.
+ * support@goodpracticegp.com.au whether or not anybody has the app open.
  *
  * The caller must present the project publishable key in the apikey header.
  */
