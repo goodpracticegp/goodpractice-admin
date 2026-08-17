@@ -12,6 +12,7 @@ import {
   X,
   AlertTriangle,
   MailWarning,
+  ClipboardPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/BrandMark";
@@ -24,6 +25,7 @@ type NavItem = { label: string; to: string; icon: typeof Package; adminOnly?: bo
 const NAV: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Medical Supplies", to: "/supplies", icon: Package },
+  { label: "Patient Intake", to: "/patient-intakes", icon: ClipboardPlus },
   { label: "Audit Log", to: "/audit", icon: ScrollText, adminOnly: true },
   { label: "Settings", to: "/settings", icon: Settings, adminOnly: true },
 ];
@@ -77,9 +79,10 @@ function ReorderMailBanner() {
       <p className="flex-1 text-sm text-foreground">
         <span className="font-semibold text-alert">Reorder emails are waiting to be sent. </span>
         {queued} notification{queued === 1 ? "" : "s"} queued
-        {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system and
-        the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au starts
-        once the sending domain notify.goodpracticegp.com.au is verified in Cloud then Emails.
+        {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system
+        and the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au
+        starts once the sending domain notify.goodpracticegp.com.au is verified in Cloud then
+        Emails.
       </p>
       <button
         type="button"
@@ -92,7 +95,6 @@ function ReorderMailBanner() {
     </div>
   );
 }
-
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, role, fullName, signOut } = useAuth();

@@ -15,8 +15,12 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedPatientIntakesIndexRouteImport } from './routes/_authenticated/patient-intakes/index'
+import { Route as AuthenticatedPatientIntakesNewRouteImport } from './routes/_authenticated/patient-intakes/new'
 import { Route as AuthenticatedSuppliesIndexRouteImport } from './routes/_authenticated/supplies/index'
 import { Route as AuthenticatedSuppliesNewRouteImport } from './routes/_authenticated/supplies/new'
+import { Route as AuthenticatedPatientIntakesIntakeIdIndexRouteImport } from './routes/_authenticated/patient-intakes/$intakeId/index'
+import { Route as AuthenticatedPatientIntakesIntakeIdEditRouteImport } from './routes/_authenticated/patient-intakes/$intakeId/edit'
 import { Route as AuthenticatedSuppliesItemIdIndexRouteImport } from './routes/_authenticated/supplies/$itemId/index'
 import { Route as AuthenticatedSuppliesItemIdEditRouteImport } from './routes/_authenticated/supplies/$itemId/edit'
 import { Route as ApiPublicHooksSendReorderEmailsRouteImport } from './routes/api/public/hooks/send-reorder-emails'
@@ -50,6 +54,18 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPatientIntakesIndexRoute =
+  AuthenticatedPatientIntakesIndexRouteImport.update({
+    id: '/patient-intakes/',
+    path: '/patient-intakes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPatientIntakesNewRoute =
+  AuthenticatedPatientIntakesNewRouteImport.update({
+    id: '/patient-intakes/new',
+    path: '/patient-intakes/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSuppliesIndexRoute =
   AuthenticatedSuppliesIndexRouteImport.update({
     id: '/supplies/',
@@ -60,6 +76,18 @@ const AuthenticatedSuppliesNewRoute =
   AuthenticatedSuppliesNewRouteImport.update({
     id: '/supplies/new',
     path: '/supplies/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPatientIntakesIntakeIdIndexRoute =
+  AuthenticatedPatientIntakesIntakeIdIndexRouteImport.update({
+    id: '/patient-intakes/$intakeId/',
+    path: '/patient-intakes/$intakeId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPatientIntakesIntakeIdEditRoute =
+  AuthenticatedPatientIntakesIntakeIdEditRouteImport.update({
+    id: '/patient-intakes/$intakeId/edit',
+    path: '/patient-intakes/$intakeId/edit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSuppliesItemIdIndexRoute =
@@ -87,10 +115,14 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/patient-intakes/': typeof AuthenticatedPatientIntakesIndexRoute
   '/supplies/': typeof AuthenticatedSuppliesIndexRoute
+  '/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
   '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
+  '/patient-intakes/$intakeId/': typeof AuthenticatedPatientIntakesIntakeIdIndexRoute
   '/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -99,10 +131,14 @@ export interface FileRoutesByTo {
   '/audit': typeof AuthenticatedAuditRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/patient-intakes': typeof AuthenticatedPatientIntakesIndexRoute
   '/supplies': typeof AuthenticatedSuppliesIndexRoute
+  '/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
   '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
+  '/patient-intakes/$intakeId': typeof AuthenticatedPatientIntakesIntakeIdIndexRoute
   '/supplies/$itemId': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRoutesById {
@@ -113,10 +149,14 @@ export interface FileRoutesById {
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
   '/_authenticated/supplies/new': typeof AuthenticatedSuppliesNewRoute
+  '/_authenticated/patient-intakes/': typeof AuthenticatedPatientIntakesIndexRoute
   '/_authenticated/supplies/': typeof AuthenticatedSuppliesIndexRoute
+  '/_authenticated/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/_authenticated/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
   '/api/public/hooks/send-reorder-emails': typeof ApiPublicHooksSendReorderEmailsRoute
+  '/_authenticated/patient-intakes/$intakeId/': typeof AuthenticatedPatientIntakesIntakeIdIndexRoute
   '/_authenticated/supplies/$itemId/': typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -127,10 +167,14 @@ export interface FileRouteTypes {
     | '/audit'
     | '/dashboard'
     | '/settings'
+    | '/patient-intakes/new'
     | '/supplies/new'
+    | '/patient-intakes/'
     | '/supplies/'
+    | '/patient-intakes/$intakeId/edit'
     | '/supplies/$itemId/edit'
     | '/api/public/hooks/send-reorder-emails'
+    | '/patient-intakes/$intakeId/'
     | '/supplies/$itemId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -139,10 +183,14 @@ export interface FileRouteTypes {
     | '/audit'
     | '/dashboard'
     | '/settings'
+    | '/patient-intakes/new'
     | '/supplies/new'
+    | '/patient-intakes'
     | '/supplies'
+    | '/patient-intakes/$intakeId/edit'
     | '/supplies/$itemId/edit'
     | '/api/public/hooks/send-reorder-emails'
+    | '/patient-intakes/$intakeId'
     | '/supplies/$itemId'
   id:
     | '__root__'
@@ -152,10 +200,14 @@ export interface FileRouteTypes {
     | '/_authenticated/audit'
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
+    | '/_authenticated/patient-intakes/new'
     | '/_authenticated/supplies/new'
+    | '/_authenticated/patient-intakes/'
     | '/_authenticated/supplies/'
+    | '/_authenticated/patient-intakes/$intakeId/edit'
     | '/_authenticated/supplies/$itemId/edit'
     | '/api/public/hooks/send-reorder-emails'
+    | '/_authenticated/patient-intakes/$intakeId/'
     | '/_authenticated/supplies/$itemId/'
   fileRoutesById: FileRoutesById
 }
@@ -210,6 +262,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/patient-intakes/': {
+      id: '/_authenticated/patient-intakes/'
+      path: '/patient-intakes'
+      fullPath: '/patient-intakes/'
+      preLoaderRoute: typeof AuthenticatedPatientIntakesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/patient-intakes/new': {
+      id: '/_authenticated/patient-intakes/new'
+      path: '/patient-intakes/new'
+      fullPath: '/patient-intakes/new'
+      preLoaderRoute: typeof AuthenticatedPatientIntakesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/supplies/': {
       id: '/_authenticated/supplies/'
       path: '/supplies'
@@ -222,6 +288,20 @@ declare module '@tanstack/react-router' {
       path: '/supplies/new'
       fullPath: '/supplies/new'
       preLoaderRoute: typeof AuthenticatedSuppliesNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/patient-intakes/$intakeId/': {
+      id: '/_authenticated/patient-intakes/$intakeId/'
+      path: '/patient-intakes/$intakeId'
+      fullPath: '/patient-intakes/$intakeId/'
+      preLoaderRoute: typeof AuthenticatedPatientIntakesIntakeIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/patient-intakes/$intakeId/edit': {
+      id: '/_authenticated/patient-intakes/$intakeId/edit'
+      path: '/patient-intakes/$intakeId/edit'
+      fullPath: '/patient-intakes/$intakeId/edit'
+      preLoaderRoute: typeof AuthenticatedPatientIntakesIntakeIdEditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/supplies/$itemId/': {
@@ -252,9 +332,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAuditRoute: typeof AuthenticatedAuditRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedPatientIntakesNewRoute: typeof AuthenticatedPatientIntakesNewRoute
   AuthenticatedSuppliesNewRoute: typeof AuthenticatedSuppliesNewRoute
+  AuthenticatedPatientIntakesIndexRoute: typeof AuthenticatedPatientIntakesIndexRoute
   AuthenticatedSuppliesIndexRoute: typeof AuthenticatedSuppliesIndexRoute
+  AuthenticatedPatientIntakesIntakeIdEditRoute: typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   AuthenticatedSuppliesItemIdEditRoute: typeof AuthenticatedSuppliesItemIdEditRoute
+  AuthenticatedPatientIntakesIntakeIdIndexRoute: typeof AuthenticatedPatientIntakesIntakeIdIndexRoute
   AuthenticatedSuppliesItemIdIndexRoute: typeof AuthenticatedSuppliesItemIdIndexRoute
 }
 
@@ -262,9 +346,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAuditRoute: AuthenticatedAuditRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedPatientIntakesNewRoute: AuthenticatedPatientIntakesNewRoute,
   AuthenticatedSuppliesNewRoute: AuthenticatedSuppliesNewRoute,
+  AuthenticatedPatientIntakesIndexRoute: AuthenticatedPatientIntakesIndexRoute,
   AuthenticatedSuppliesIndexRoute: AuthenticatedSuppliesIndexRoute,
+  AuthenticatedPatientIntakesIntakeIdEditRoute:
+    AuthenticatedPatientIntakesIntakeIdEditRoute,
   AuthenticatedSuppliesItemIdEditRoute: AuthenticatedSuppliesItemIdEditRoute,
+  AuthenticatedPatientIntakesIntakeIdIndexRoute:
+    AuthenticatedPatientIntakesIntakeIdIndexRoute,
   AuthenticatedSuppliesItemIdIndexRoute: AuthenticatedSuppliesItemIdIndexRoute,
 }
 
