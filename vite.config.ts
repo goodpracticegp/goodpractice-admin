@@ -13,6 +13,6 @@ export default defineConfig({
     server: { entry: "server" },
   },
   preview: {
-    allowedHosts: [".run.app"],
+    allowedHosts: [".run.app", "admin.goodpracticegp.com.au"],
   },
 });
