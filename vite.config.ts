@@ -12,7 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  preview: {
-    allowedHosts: [".run.app", "admin.goodpracticegp.com.au"],
+  vite: {
+    preview: {
+      allowedHosts: [".run.app", "admin.goodpracticegp.com.au"],
+    },
   },
 });
