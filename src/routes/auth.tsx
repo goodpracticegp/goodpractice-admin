@@ -31,7 +31,7 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
-const AUTHORISED_EMAIL = "info@goodpracticegp.com.au";
+const AUTHORISED_EMAIL = "support@goodpracticegp.com.au";
 
 function AuthPage() {
   const navigate = useNavigate();

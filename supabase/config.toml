@@ -1,1 +1,13 @@
-project_id = "iuosjyfwjuinktnuzrqk"
+project_id = "psgafomhrleoxdpajzwg"
+[auth]
+site_url = "https://admin.goodpracticegp.com.au"
+additional_redirect_urls = ["https://admin.goodpracticegp.com.au", "https://admin.goodpracticegp.com.au/auth"]
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m0s"
+otp_length = 8

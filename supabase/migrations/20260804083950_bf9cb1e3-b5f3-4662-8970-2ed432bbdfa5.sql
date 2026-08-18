@@ -1,1 +1,1 @@
-GRANT SELECT, INSERT, DELETE ON public.source_export TO sandbox_exec;
+-- Lovable-only sandbox_exec grant omitted for standalone Supabase.

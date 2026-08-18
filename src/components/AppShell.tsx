@@ -12,6 +12,9 @@ import {
   X,
   AlertTriangle,
   MailWarning,
+  ClipboardPlus,
+  PlusCircle,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/BrandMark";
@@ -24,6 +27,8 @@ type NavItem = { label: string; to: string; icon: typeof Package; adminOnly?: bo
 const NAV: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Medical Supplies", to: "/supplies", icon: Package },
+  { label: "Patient Intake", to: "/patient-intakes", icon: ClipboardPlus },
+  { label: "Staff Onboarding", to: "/staff-onboarding", icon: UserPlus, adminOnly: true },
   { label: "Audit Log", to: "/audit", icon: ScrollText, adminOnly: true },
   { label: "Settings", to: "/settings", icon: Settings, adminOnly: true },
 ];
@@ -57,6 +62,43 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
+function MobileBottomNav() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const items = [
+    { label: "Home", to: "/dashboard", icon: LayoutDashboard },
+    { label: "Patients", to: "/patient-intakes", icon: ClipboardPlus },
+    { label: "New intake", to: "/patient-intakes/new", icon: PlusCircle },
+    { label: "Supplies", to: "/supplies", icon: Package },
+  ];
+
+  return (
+    <nav
+      aria-label="Mobile navigation"
+      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-panel backdrop-blur lg:hidden"
+    >
+      {items.map((item) => {
+        const active =
+          item.to === "/patient-intakes/new"
+            ? pathname === item.to
+            : pathname === item.to || pathname.startsWith(`${item.to}/`);
+        return (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={cn(
+              "flex min-h-16 flex-col items-center justify-center gap-1 px-1 text-[11px] font-semibold",
+              active ? "text-alert" : "text-muted-foreground",
+            )}
+          >
+            <item.icon className="h-5 w-5" />
+            <span>{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 function ReorderMailBanner() {
   const [dismissed, setDismissed] = useState(false);
   const status = useServerFn(getReorderMailStatus);
@@ -77,9 +119,10 @@ function ReorderMailBanner() {
       <p className="flex-1 text-sm text-foreground">
         <span className="font-semibold text-alert">Reorder emails are waiting to be sent. </span>
         {queued} notification{queued === 1 ? "" : "s"} queued
-        {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system and
-        the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au starts
-        once the sending domain notify.goodpracticegp.com.au is verified in Cloud then Emails.
+        {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system
+        and the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au
+        starts once the sending domain notify.goodpracticegp.com.au is verified in Cloud then
+        Emails.
       </p>
       <button
         type="button"
@@ -92,7 +135,6 @@ function ReorderMailBanner() {
     </div>
   );
 }
-
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, role, fullName, signOut } = useAuth();
@@ -162,7 +204,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="min-w-0 flex-1">
-            <BrandMark className="text-navy lg:hidden" />
+            <BrandMark compact className="text-navy lg:hidden" />
             <div className="hidden lg:block">
               <h2 className="text-sm font-semibold text-navy">
                 Medical Centre Administration System
@@ -206,8 +248,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <ReorderMailBanner />
 
-        <main className="flex-1 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:pb-6">{children}</main>
       </div>
+      <MobileBottomNav />
     </div>
   );
 }
