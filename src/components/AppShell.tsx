@@ -14,6 +14,7 @@ import {
   MailWarning,
   ClipboardPlus,
   PlusCircle,
+  UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/BrandMark";
@@ -27,6 +28,7 @@ const NAV: NavItem[] = [
   { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Medical Supplies", to: "/supplies", icon: Package },
   { label: "Patient Intake", to: "/patient-intakes", icon: ClipboardPlus },
+  { label: "Staff Onboarding", to: "/staff-onboarding", icon: UserPlus, adminOnly: true },
   { label: "Audit Log", to: "/audit", icon: ScrollText, adminOnly: true },
   { label: "Settings", to: "/settings", icon: Settings, adminOnly: true },
 ];
@@ -118,7 +120,7 @@ function ReorderMailBanner() {
         <span className="font-semibold text-alert">Reorder emails are waiting to be sent. </span>
         {queued} notification{queued === 1 ? "" : "s"} queued
         {failed > 0 ? ` and ${failed} failed` : ""}. Every notification is recorded in the system
-        and the scheduled mailer retries automatically. Delivery to support@goodpracticegp.com.au
+        and the scheduled mailer retries automatically. Delivery to info@goodpracticegp.com.au
         starts once the sending domain notify.goodpracticegp.com.au is verified in Cloud then
         Emails.
       </p>
@@ -202,7 +204,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="min-w-0 flex-1">
-            <BrandMark className="text-navy lg:hidden" />
+            <BrandMark compact className="text-navy lg:hidden" />
             <div className="hidden lg:block">
               <h2 className="text-sm font-semibold text-navy">
                 Medical Centre Administration System

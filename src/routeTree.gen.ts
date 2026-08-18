@@ -17,6 +17,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedPatientIntakesIndexRouteImport } from './routes/_authenticated/patient-intakes/index'
 import { Route as AuthenticatedPatientIntakesNewRouteImport } from './routes/_authenticated/patient-intakes/new'
+import { Route as AuthenticatedStaffOnboardingIndexRouteImport } from './routes/_authenticated/staff-onboarding/index'
+import { Route as AuthenticatedStaffOnboardingNewRouteImport } from './routes/_authenticated/staff-onboarding/new'
 import { Route as AuthenticatedSuppliesIndexRouteImport } from './routes/_authenticated/supplies/index'
 import { Route as AuthenticatedSuppliesNewRouteImport } from './routes/_authenticated/supplies/new'
 import { Route as AuthenticatedPatientIntakesIntakeIdIndexRouteImport } from './routes/_authenticated/patient-intakes/$intakeId/index'
@@ -64,6 +66,18 @@ const AuthenticatedPatientIntakesNewRoute =
   AuthenticatedPatientIntakesNewRouteImport.update({
     id: '/patient-intakes/new',
     path: '/patient-intakes/new',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStaffOnboardingIndexRoute =
+  AuthenticatedStaffOnboardingIndexRouteImport.update({
+    id: '/staff-onboarding/',
+    path: '/staff-onboarding/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedStaffOnboardingNewRoute =
+  AuthenticatedStaffOnboardingNewRouteImport.update({
+    id: '/staff-onboarding/new',
+    path: '/staff-onboarding/new',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedSuppliesIndexRoute =
@@ -116,8 +130,10 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
+  '/staff-onboarding/new': typeof AuthenticatedStaffOnboardingNewRoute
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/patient-intakes/': typeof AuthenticatedPatientIntakesIndexRoute
+  '/staff-onboarding/': typeof AuthenticatedStaffOnboardingIndexRoute
   '/supplies/': typeof AuthenticatedSuppliesIndexRoute
   '/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
@@ -132,8 +148,10 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
+  '/staff-onboarding/new': typeof AuthenticatedStaffOnboardingNewRoute
   '/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/patient-intakes': typeof AuthenticatedPatientIntakesIndexRoute
+  '/staff-onboarding': typeof AuthenticatedStaffOnboardingIndexRoute
   '/supplies': typeof AuthenticatedSuppliesIndexRoute
   '/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
@@ -150,8 +168,10 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/patient-intakes/new': typeof AuthenticatedPatientIntakesNewRoute
+  '/_authenticated/staff-onboarding/new': typeof AuthenticatedStaffOnboardingNewRoute
   '/_authenticated/supplies/new': typeof AuthenticatedSuppliesNewRoute
   '/_authenticated/patient-intakes/': typeof AuthenticatedPatientIntakesIndexRoute
+  '/_authenticated/staff-onboarding/': typeof AuthenticatedStaffOnboardingIndexRoute
   '/_authenticated/supplies/': typeof AuthenticatedSuppliesIndexRoute
   '/_authenticated/patient-intakes/$intakeId/edit': typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   '/_authenticated/supplies/$itemId/edit': typeof AuthenticatedSuppliesItemIdEditRoute
@@ -168,8 +188,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/settings'
     | '/patient-intakes/new'
+    | '/staff-onboarding/new'
     | '/supplies/new'
     | '/patient-intakes/'
+    | '/staff-onboarding/'
     | '/supplies/'
     | '/patient-intakes/$intakeId/edit'
     | '/supplies/$itemId/edit'
@@ -184,8 +206,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/settings'
     | '/patient-intakes/new'
+    | '/staff-onboarding/new'
     | '/supplies/new'
     | '/patient-intakes'
+    | '/staff-onboarding'
     | '/supplies'
     | '/patient-intakes/$intakeId/edit'
     | '/supplies/$itemId/edit'
@@ -201,8 +225,10 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/settings'
     | '/_authenticated/patient-intakes/new'
+    | '/_authenticated/staff-onboarding/new'
     | '/_authenticated/supplies/new'
     | '/_authenticated/patient-intakes/'
+    | '/_authenticated/staff-onboarding/'
     | '/_authenticated/supplies/'
     | '/_authenticated/patient-intakes/$intakeId/edit'
     | '/_authenticated/supplies/$itemId/edit'
@@ -276,6 +302,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPatientIntakesNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/staff-onboarding/': {
+      id: '/_authenticated/staff-onboarding/'
+      path: '/staff-onboarding'
+      fullPath: '/staff-onboarding/'
+      preLoaderRoute: typeof AuthenticatedStaffOnboardingIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/staff-onboarding/new': {
+      id: '/_authenticated/staff-onboarding/new'
+      path: '/staff-onboarding/new'
+      fullPath: '/staff-onboarding/new'
+      preLoaderRoute: typeof AuthenticatedStaffOnboardingNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/supplies/': {
       id: '/_authenticated/supplies/'
       path: '/supplies'
@@ -333,8 +373,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedPatientIntakesNewRoute: typeof AuthenticatedPatientIntakesNewRoute
+  AuthenticatedStaffOnboardingNewRoute: typeof AuthenticatedStaffOnboardingNewRoute
   AuthenticatedSuppliesNewRoute: typeof AuthenticatedSuppliesNewRoute
   AuthenticatedPatientIntakesIndexRoute: typeof AuthenticatedPatientIntakesIndexRoute
+  AuthenticatedStaffOnboardingIndexRoute: typeof AuthenticatedStaffOnboardingIndexRoute
   AuthenticatedSuppliesIndexRoute: typeof AuthenticatedSuppliesIndexRoute
   AuthenticatedPatientIntakesIntakeIdEditRoute: typeof AuthenticatedPatientIntakesIntakeIdEditRoute
   AuthenticatedSuppliesItemIdEditRoute: typeof AuthenticatedSuppliesItemIdEditRoute
@@ -347,8 +389,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedPatientIntakesNewRoute: AuthenticatedPatientIntakesNewRoute,
+  AuthenticatedStaffOnboardingNewRoute: AuthenticatedStaffOnboardingNewRoute,
   AuthenticatedSuppliesNewRoute: AuthenticatedSuppliesNewRoute,
   AuthenticatedPatientIntakesIndexRoute: AuthenticatedPatientIntakesIndexRoute,
+  AuthenticatedStaffOnboardingIndexRoute:
+    AuthenticatedStaffOnboardingIndexRoute,
   AuthenticatedSuppliesIndexRoute: AuthenticatedSuppliesIndexRoute,
   AuthenticatedPatientIntakesIntakeIdEditRoute:
     AuthenticatedPatientIntakesIntakeIdEditRoute,
